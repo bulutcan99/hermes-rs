@@ -1,1 +1,0 @@
-{async closure@src/main.rs:23:24: 23:80}: MessageHandler<LocalAdapter, _>
