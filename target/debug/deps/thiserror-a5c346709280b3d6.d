@@ -1,0 +1,11 @@
+/Users/bulutgocer/PROJECTS/RUST/github/bulutcan99/message/target/debug/deps/libthiserror-a5c346709280b3d6.rmeta: /Users/bulutgocer/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.12/src/lib.rs /Users/bulutgocer/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.12/src/aserror.rs /Users/bulutgocer/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.12/src/display.rs /Users/bulutgocer/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.12/src/provide.rs /Users/bulutgocer/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.12/src/var.rs
+
+/Users/bulutgocer/PROJECTS/RUST/github/bulutcan99/message/target/debug/deps/libthiserror-a5c346709280b3d6.rlib: /Users/bulutgocer/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.12/src/lib.rs /Users/bulutgocer/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.12/src/aserror.rs /Users/bulutgocer/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.12/src/display.rs /Users/bulutgocer/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.12/src/provide.rs /Users/bulutgocer/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.12/src/var.rs
+
+/Users/bulutgocer/PROJECTS/RUST/github/bulutcan99/message/target/debug/deps/thiserror-a5c346709280b3d6.d: /Users/bulutgocer/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.12/src/lib.rs /Users/bulutgocer/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.12/src/aserror.rs /Users/bulutgocer/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.12/src/display.rs /Users/bulutgocer/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.12/src/provide.rs /Users/bulutgocer/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.12/src/var.rs
+
+/Users/bulutgocer/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.12/src/lib.rs:
+/Users/bulutgocer/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.12/src/aserror.rs:
+/Users/bulutgocer/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.12/src/display.rs:
+/Users/bulutgocer/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.12/src/provide.rs:
+/Users/bulutgocer/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.12/src/var.rs:
