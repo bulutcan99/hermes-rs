@@ -7,7 +7,7 @@ edition = "2024"
 tokio = { version = "1.44.1", features = ["full"] }
 socketioxide = { version = "0.16.2" }
 tracing = { version = "0.1.41" }
-tracing-subscriber = { version = "0.3.19" }
+tracing-subscriber = { version = "0.3.19", features = ["env-filter", "json", "time"] }
 axum = { version = "0.8.1" }
 axum-server = {version = "0.7.2"}
 serde = { version = "1.0.219", features = ["derive"] }
@@ -15,3 +15,7 @@ serde_json = { version = "1.0.140", features = ["default"] }
 tower = {version = "0.5.2" }
 tower-http = {version = "0.6.2", features = ["cors"]}
 chrono = {version = "0.4.40", features = ["serde"]}
+sqlx = { version = "0.8.3", features = ["postgres", "runtime-tokio-rustls", "uuid", "time"] }
+async-trait = "0.1.81"
+serde_yaml = "0.9"
+lazy_static = "1.5.0"
