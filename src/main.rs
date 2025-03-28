@@ -25,11 +25,11 @@ struct MessageOutputData{
   date: chrono::DateTime<chrono::Utc>,
 }
 
-
 async fn on_connect(socket: SocketRef) {
     info!("Connecting to socket {:?}", socket);
 
-    socket.on("message", |sock: SocketRef, Data::<MessageInputData>(data)| async move {
+  socket.on("joinRoom", |sock: SocketRef, Data::<MessageInputData>(data)| async move {
+    info!("Received message in room {:?}: {:?}", data.room, data.text);
         let output = MessageOutputData {
             date: chrono::Utc::now(),
             text: data.text,
@@ -37,7 +37,6 @@ async fn on_connect(socket: SocketRef) {
         };
 
         info!("Sending message: {:?}", output);
-
         if let Err(err) = sock.emit("message", &output) {
             error!("Failed to send message: {:?}", err);
         }
@@ -55,7 +54,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             ServiceBuilder::new()
                 .layer(CorsLayer::permissive())
                 .layer(io_layer)
-                .into_inner(), // ServiceBuilder'ı bir Layer olarak almak için
+                .into_inner(),
         );
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
