@@ -68,7 +68,7 @@ impl std::fmt::Display for LogLevel {
 }
 
 // Function to initialize the logger based on the provided configuration
-const MODULE_WHITELIST: &[&str] = &["loco_rs", "sea_orm_migration", "tower_http", "sqlx::query"];
+const MODULE_WHITELIST: &[&str] = &["sea_orm_migration", "tower_http", "sqlx::query"];
 
 // Keep nonblocking file appender work guard
 static NONBLOCKING_WORK_GUARD_KEEP: OnceLock<WorkerGuard> = OnceLock::new();
@@ -188,13 +188,13 @@ fn init_env_filter(
         .expect("logger initialization failed")
 }
 
-fn init_layer<W2>(
-    make_writer: W2,
+fn init_layer<Writer>(
+    make_writer: Writer,
     format: &Format,
     ansi: bool,
 ) -> Box<dyn Layer<Registry> + Sync + Send>
 where
-    W2: for<'writer> MakeWriter<'writer> + Sync + Send + 'static,
+    Writer: for<'writer> MakeWriter<'writer> + Sync + Send + 'static,
 {
     match format {
         Format::Compact => fmt::Layer::default()

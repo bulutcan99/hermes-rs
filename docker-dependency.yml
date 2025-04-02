@@ -3,14 +3,14 @@ version: '3.8'
 services:
   postgres:
     image: postgres:latest
-    container_name: matchmaker-postgres
+    container_name: hermes-postgres
     restart: always
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 1234
-      POSTGRES_DB: matchmaker
+      POSTGRES_USER: hermes
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: hermes
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:

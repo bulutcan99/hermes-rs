@@ -2,6 +2,7 @@ use crate::shared::config::config::Config;
 use bb8::Pool;
 use sidekiq::RedisConnectionManager;
 
+
 pub async fn connect_redis() -> Option<Pool<RedisConnectionManager>> {
     let config = Config::get();
     if let Some(redis) = &config.queue {

@@ -93,10 +93,6 @@ where
     let result = app.user_service.register(&register_user).await;
     match result {
         Ok(registered_user) => {
-            AuthMailer::send_welcome(&app.task_context, &registered_user)
-                .await
-                .map_err(|e| RegisterError::InternalError)?;
-
             let res = UserRegisterResponse {
                 user_id: registered_user.id.unwrap(),
                 name: registered_user.name,

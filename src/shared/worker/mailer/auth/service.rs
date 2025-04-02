@@ -19,24 +19,7 @@ impl AuthMailer {
     ///
     /// When email sending is failed
     pub async fn send_welcome(ctx: &TaskContext, user: &User) -> Result<(), AuthMailerError> {
-        let config = Config::get();
-        let full_url = format!("{}:{}", config.server.host, config.server.port);
-        Self::mail_template(
-            ctx,
-            &WELCOME,
-            Args {
-                to: user.email.to_string(),
-                locals: json!({
-                  "name": user.name,
-                  "verifyToken": user.email_verification_token,
-                  "domain": full_url,
-                }),
-                ..Default::default()
-            },
-        )
-        .await
-        .map_err(|_| AuthMailerError::SendWelcomeError(user.email.to_string()))?;
-        Ok(())
+        todo!()
     }
 
     /// Sending FORGOT password email
@@ -45,24 +28,6 @@ impl AuthMailer {
     ///
     /// When email sending is failed
     pub async fn forgot_password(ctx: &TaskContext, user: &User) -> Result<(), AuthMailerError> {
-        let config = Config::get();
-        let full_url = format!("{}:{}", config.server.host, config.server.port);
-        Self::mail_template(
-            ctx,
-            &FORGOT,
-            Args {
-                to: user.email.to_string(),
-                locals: json!({
-                  "name": user.name,
-                  "resetToken": user.reset_token,
-                  "domain": full_url,
-                }),
-                ..Default::default()
-            },
-        )
-        .await
-        .map_err(|_| AuthMailerError::SendForgotPasswordError(user.email.to_string()))?;
-
-        Ok(())
+        todo!()
     }
 }

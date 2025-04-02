@@ -1,12 +1,20 @@
+use crate::adapter::driven::storage::db::db_connection::DB;
+use crate::adapter::driven::storage::db::repository::user::UserRepository;
+use crate::adapter::driven::storage::memory::redis_connection::connect_redis;
+use crate::adapter::driving::presentation::http::router::{make_router, AppState};
+use crate::core::application::usecase::auth::service::UserService;
+use crate::shared::config::environment::Environment;
+use crate::shared::logger::logger;
+use axum_server::Server;
 use std::error::Error;
+use std::net::SocketAddr;
 use std::sync::Arc;
+use tracing::log::info;
 
 pub mod adapter;
 pub mod core;
 pub mod shared;
 
-
-//todo: mail kismindaki hata giderilicek
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     Environment::from_env()
@@ -19,12 +27,13 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let cache = connect_redis().await;
     info!("Redis initialized");
     let user_repository = Arc::new(UserRepository::new(Arc::clone(&db.pool)));
-    // let company_repository = CompanyRepository::new(Arc::clone(&db.pool));
     let user_service = Arc::new(UserService::new(Arc::clone(&user_repository)));
-    let mailer = EmailSender::new();
-    let task_context = TaskContext::new(cache, mailer);
-    let app_state = Arc::new(AppState::new(user_service, task_context));
+    let app_state = Arc::new(AppState::new(user_service));
     let route = make_router(app_state);
-    Server::bind().serve(route.into_make_service()).await?;
+    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+    info!("Starting server");
+    axum_server::bind(addr)
+        .serve(route.into_make_service())
+        .await?;
     Ok(())
 }
