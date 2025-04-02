@@ -68,7 +68,7 @@ impl std::fmt::Display for LogLevel {
 }
 
 // Function to initialize the logger based on the provided configuration
-const MODULE_WHITELIST: &[&str] = &["loco_rs", "sea_orm_migration", "tower_http", "sqlx::query"];
+const MODULE_WHITELIST: &[&str] = &["message", "sqlx::query"];
 
 // Keep nonblocking file appender work guard
 static NONBLOCKING_WORK_GUARD_KEEP: OnceLock<WorkerGuard> = OnceLock::new();
@@ -152,8 +152,40 @@ pub fn init() {
     }
 
     if !layers.is_empty() {
-        tracing_subscriber::registry().with(layers).init();
+        let env_filter = init_env_filter(
+            config.logger.override_filter.as_ref(),
+            &config.logger.level,
+            &config.server.name,
+        );
+        tracing_subscriber::registry()
+            .with(layers)
+            .with(env_filter)
+            .init();
     }
+}
+
+fn init_env_filter(
+    override_filter: Option<&String>,
+    level: &LogLevel,
+    app_name: &str,
+) -> EnvFilter {
+    EnvFilter::try_from_default_env()
+        .or_else(|_| {
+            override_filter.map_or_else(
+                || {
+                    EnvFilter::try_new(
+                        MODULE_WHITELIST
+                            .iter()
+                            .map(|m| format!("{m}={level}"))
+                            .chain(std::iter::once(format!("{}={}", app_name, level)))
+                            .collect::<Vec<_>>()
+                            .join(","),
+                    )
+                },
+                EnvFilter::try_new,
+            )
+        })
+        .expect("logger initialization failed")
 }
 
 fn init_layer<W2>(
