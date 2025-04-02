@@ -8,7 +8,7 @@ use crate::core::application::usecase::auth::error::{LoginError, MeError, Regist
 use crate::core::domain::entity::user::User;
 
 #[async_trait]
-pub trait UserRepo: Send + Sync {
+pub trait UserStorage: Send + Sync + 'static {
     async fn save(&self, entity: &User) -> Result<User, Error>;
     async fn update(&self, id_str: &str, entity: &User) -> Result<User, Error>;
     async fn delete(&self, id_str: &str) -> Result<(), Error>;
@@ -18,12 +18,11 @@ pub trait UserRepo: Send + Sync {
 }
 
 #[async_trait]
-pub trait UserManagement: Send + Sync {
+pub trait UserManagement: Send + Sync + 'static {
     async fn register(
         &self,
         input: &UserRegisterRequest,
     ) -> Result<User, RegisterError<ValidationErrors>>;
     async fn login(&self, input: &UserLoginRequest) -> Result<User, LoginError>;
     async fn me(&self, email: &str) -> Result<User, MeError>;
-    // async fn update_profile(&self, input: &UserRegisterRequest) -> Result<(), Error>;
 }

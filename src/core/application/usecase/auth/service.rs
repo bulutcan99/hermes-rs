@@ -8,19 +8,19 @@ use crate::adapter::driving::presentation::http::handler::auth::register::UserRe
 use crate::core::application::usecase::auth::error::{LoginError, MeError, RegisterError};
 use crate::core::domain::entity::user::User;
 use crate::core::domain::valueobject::role;
-use crate::core::port::user::{UserManagement, UserRepo};
+use crate::core::port::user::{UserManagement, UserStorage};
 
 #[derive(Debug, Clone)]
 pub struct UserService<K>
 where
-    K: UserRepo,
+    K: UserStorage,
 {
     user_repository: Arc<K>,
 }
 
 impl<K> UserService<K>
 where
-    K: UserRepo,
+    K: UserStorage,
 {
     pub fn new(user_repository: Arc<K>) -> Self {
         Self { user_repository }
@@ -30,7 +30,7 @@ where
 #[async_trait]
 impl<K> UserManagement for UserService<K>
 where
-    K: UserRepo,
+    K: UserStorage,
 {
     async fn register(
         &self,
@@ -91,9 +91,4 @@ where
             .ok_or(MeError::UserNotFound)?;
         Ok(user)
     }
-
-    // async fn update_profile(&self, input: &UpdateUserPofileInput) -> Result<(), Error> {
-    //     todo!()
-    // }
-    //
 }

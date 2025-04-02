@@ -5,14 +5,14 @@ use uuid::Uuid;
 
 use crate::adapter::driven::storage::memory::cache::MemCache;
 use crate::core::domain::entity::user::User;
-use crate::core::port::user::UserRepo;
+use crate::core::port::user::UserStorage;
 
-pub struct UserRepository {
+pub struct InMemoryUserRepo {
     id_counter: Mutex<u64>,
     cache: MemCache<Uuid, User>,
 }
 
-impl UserRepository {
+impl InMemoryUserRepo {
     pub fn new() -> Self {
         Self {
             id_counter: Mutex::new(0),
@@ -22,7 +22,7 @@ impl UserRepository {
 }
 
 #[async_trait]
-impl UserRepo for UserRepository {
+impl UserStorage for InMemoryUserRepo {
     async fn save(&self, user: &User) -> Result<User, Error> {
         let mut counter = self.id_counter.lock().await;
         let mut owned_user = user.clone();

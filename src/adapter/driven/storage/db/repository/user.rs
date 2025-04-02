@@ -10,21 +10,21 @@ use crate::core::domain::entity::user::User;
 use crate::core::domain::valueobject::date::Timestamp;
 use crate::core::domain::valueobject::password::HashedPassword;
 use crate::core::domain::valueobject::role::Role;
-use crate::core::port::user::UserRepo;
+use crate::core::port::user::UserStorage;
 
 #[derive(Debug, Clone)]
-pub struct UserRepository {
+pub struct DatabaseUserRepo {
     db: Arc<Pool<Postgres>>,
 }
 
-impl UserRepository {
+impl DatabaseUserRepo {
     pub fn new(db: Arc<Pool<Postgres>>) -> Self {
-        UserRepository { db }
+        DatabaseUserRepo { db }
     }
 }
 
 #[async_trait]
-impl UserRepo for UserRepository {
+impl UserStorage for DatabaseUserRepo {
     async fn save(&self, user: &User) -> Result<User, Error> {
         let result = sqlx::query!(
             r#"
