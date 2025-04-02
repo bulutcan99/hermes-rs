@@ -3,10 +3,10 @@ use std::sync::OnceLock;
 use serde::{Deserialize, Serialize};
 use serde_variant::to_variant_name;
 use tracing_appender::non_blocking::WorkerGuard;
-use tracing_subscriber::{EnvFilter, fmt, Layer, Registry};
 use tracing_subscriber::fmt::MakeWriter;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
+use tracing_subscriber::{EnvFilter, Layer, Registry, fmt};
 
 use crate::shared::config::config::Config;
 
@@ -68,7 +68,7 @@ impl std::fmt::Display for LogLevel {
 }
 
 // Function to initialize the logger based on the provided configuration
-const MODULE_WHITELIST: &[&str] = &["sea_orm_migration", "tower_http", "sqlx::query"];
+const MODULE_WHITELIST: &[&str] = &["loco_rs", "sea_orm_migration", "tower_http", "sqlx::query"];
 
 // Keep nonblocking file appender work guard
 static NONBLOCKING_WORK_GUARD_KEEP: OnceLock<WorkerGuard> = OnceLock::new();
@@ -152,49 +152,17 @@ pub fn init() {
     }
 
     if !layers.is_empty() {
-        let env_filter = init_env_filter(
-            config.logger.override_filter.as_ref(),
-            &config.logger.level,
-            &config.server.name,
-        );
-        tracing_subscriber::registry()
-            .with(layers)
-            .with(env_filter)
-            .init();
+        tracing_subscriber::registry().with(layers).init();
     }
 }
 
-fn init_env_filter(
-    override_filter: Option<&String>,
-    level: &LogLevel,
-    app_name: &str,
-) -> EnvFilter {
-    EnvFilter::try_from_default_env()
-        .or_else(|_| {
-            override_filter.map_or_else(
-                || {
-                    EnvFilter::try_new(
-                        MODULE_WHITELIST
-                            .iter()
-                            .map(|m| format!("{m}={level}"))
-                            .chain(std::iter::once(format!("{}={}", app_name, level)))
-                            .collect::<Vec<_>>()
-                            .join(","),
-                    )
-                },
-                EnvFilter::try_new,
-            )
-        })
-        .expect("logger initialization failed")
-}
-
-fn init_layer<Writer>(
-    make_writer: Writer,
+fn init_layer<W2>(
+    make_writer: W2,
     format: &Format,
     ansi: bool,
 ) -> Box<dyn Layer<Registry> + Sync + Send>
 where
-    Writer: for<'writer> MakeWriter<'writer> + Sync + Send + 'static,
+    W2: for<'writer> MakeWriter<'writer> + Sync + Send + 'static,
 {
     match format {
         Format::Compact => fmt::Layer::default()

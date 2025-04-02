@@ -9,7 +9,7 @@ use axum_server::Server;
 use std::error::Error;
 use std::net::SocketAddr;
 use std::sync::Arc;
-use tracing::log::info;
+use tracing_subscriber::{Layer, fmt};
 
 pub mod adapter;
 pub mod core;
@@ -21,17 +21,17 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .load()
         .expect("Environment loading failed!");
     logger::init();
-    info!("Logger initialized!");
+    tracing::info!("Logger initialized");
     let db = DB::new().await?;
-    info!("DB initialized!");
+    tracing::info!("DB initialized!");
     let cache = connect_redis().await;
-    info!("Redis initialized");
+    tracing::info!("Redis initialized");
     let user_repository = Arc::new(DatabaseUserRepo::new(Arc::clone(&db.pool)));
     let user_service = Arc::new(UserService::new(Arc::clone(&user_repository)));
     let app_state = Arc::new(AppState::new(user_service));
     let route = make_router(app_state);
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
-    info!("Starting server");
+    tracing::info!("Starting server");
     axum_server::bind(addr)
         .serve(route.into_make_service())
         .await?;
