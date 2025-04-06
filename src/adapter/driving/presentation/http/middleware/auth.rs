@@ -5,19 +5,19 @@ use std::sync::Arc;
 use axum::body::Body;
 use axum::http::Request;
 
+use axum::Extension;
 use axum::extract::State;
 use axum::middleware::Next;
 use axum::response::Response;
-use axum::Extension;
 use axum_extra::extract::cookie::Cookie;
 use serde_derive::Serialize;
 use tower_cookies::Cookies;
 
 use crate::adapter::driving::presentation::http::middleware::cookie::{
-    set_token_cookie, AUTH_TOKEN,
+    AUTH_TOKEN, set_token_cookie,
 };
 use crate::adapter::driving::presentation::http::router::AppState;
-use crate::core::application::usecase::auth::token::{validate_web_token, Token};
+use crate::core::application::usecase::auth::jwt::{Token, validate_web_token};
 use crate::core::domain::entity::user::User;
 use crate::core::port::user::UserManagement;
 

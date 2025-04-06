@@ -1,13 +1,12 @@
 use std::sync::Arc;
 
-use axum::extract::State;
 use axum::Json;
+use axum::extract::State;
 use http::StatusCode;
 use serde::Serialize;
 use serde_derive::Deserialize;
 use tower_cookies::Cookies;
 
-use crate::adapter::driving::presentation::http::middleware::cookie::set_token_cookie;
 use crate::adapter::driving::presentation::http::response::field_error::ResponseError;
 use crate::adapter::driving::presentation::http::response::response::{
     ApiResponse, ApiResponseData,
@@ -24,7 +23,8 @@ pub struct UserLoginRequest {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct UserLoginResponse {
-    pub token: String,
+    pub access_token: String,
+    pub refresh_token: String,
 }
 
 impl<E> From<LoginError> for ApiResponseData<E>
@@ -84,7 +84,6 @@ where
 
 pub async fn login_handler<S>(
     State(app): State<Arc<AppState<S>>>,
-    cookies: Cookies,
     login_user: Json<UserLoginRequest>,
 ) -> ApiResponse<UserLoginResponse, ResponseError>
 where
@@ -93,10 +92,7 @@ where
     let result = app.user_service.login(&login_user).await;
 
     match result {
-        Ok(user) => match set_token_cookie(&cookies, &login_user.email, user.id.unwrap()) {
-            Ok(()) => Ok(ApiResponseData::status_code(StatusCode::OK)),
-            Err(error) => Err(ApiResponseData::from(error)),
-        },
+        Ok(user) => {}
         Err(error) => Err(ApiResponseData::from(error)),
     }
 }

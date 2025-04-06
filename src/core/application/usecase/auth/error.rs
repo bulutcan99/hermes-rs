@@ -4,6 +4,7 @@ use serde_derive::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum TokenError {
+    InvalidUuid,
     HmacFailNewFromSlice,
     InvalidFormat,
     CannotDecodeIdent,

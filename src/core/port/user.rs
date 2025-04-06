@@ -23,6 +23,6 @@ pub trait UserManagement: Send + Sync + 'static {
         &self,
         input: &UserRegisterRequest,
     ) -> Result<User, RegisterError<ValidationErrors>>;
-    async fn login(&self, input: &UserLoginRequest) -> Result<User, LoginError>;
+    async fn login(&self, input: &UserLoginRequest) -> Result<(String, String), LoginError>;
     async fn me(&self, email: &str) -> Result<User, MeError>;
 }

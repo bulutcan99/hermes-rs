@@ -190,9 +190,13 @@ queue:
 auth:
   # JWT authentication
   jwt:
-    # Secret key for token generation and verification
-    secret: wQGWfnakXRH2ANhTAg2h
-    # Token expiration time in seconds
-    expiration: 604800 # 7 days
+  # Access secret key for token generation and verification
+  access_secret: afsadad
+  # Token expiration time in seconds
+  access_expiration: 3600 # 1 hour
+  # Refresh secret key for token generation and verification
+  refresh_secret: asfasd
+  # Token expiration time in seconds
+  refresh_expiration: 604800 # 7 days
   password:
     secret: 3wT7Kf8JmLq1Zx9Pn2GtHv6YvBcDdRt6

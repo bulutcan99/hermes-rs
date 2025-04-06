@@ -234,10 +234,14 @@ pub struct JWT {
     /// The location where JWT tokens are expected to be found during
     /// authentication.
     pub location: Option<JWTLocation>,
-    /// The secret key For JWT token
-    pub secret: String,
-    /// The expiration time sec for authentication tokens
-    pub expiration: u64,
+    /// The secret key for access JWT token
+    pub access_secret: String,
+    /// The expiration time sec for access tokens
+    pub access_expiration: u64,
+    /// The secret key for refresh JWT token
+    pub refresh_secret: String,
+    /// The expiration time sec for refresh tokens
+    pub refresh_expiration: u64,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]

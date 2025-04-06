@@ -6,6 +6,7 @@ use validator::ValidationErrors;
 use crate::adapter::driving::presentation::http::handler::auth::login::UserLoginRequest;
 use crate::adapter::driving::presentation::http::handler::auth::register::UserRegisterRequest;
 use crate::core::application::usecase::auth::error::{LoginError, MeError, RegisterError};
+use crate::core::application::usecase::auth::jwt::{generate_access_token, generate_refresh_token};
 use crate::core::domain::entity::user::User;
 use crate::core::domain::valueobject::role;
 use crate::core::port::user::{UserManagement, UserStorage};
@@ -63,20 +64,27 @@ where
         Ok(registered_user)
     }
 
-    async fn login(&self, input: &UserLoginRequest) -> Result<User, LoginError> {
+    async fn login(&self, input: &UserLoginRequest) -> Result<(String, String), LoginError> {
         let found_user = self
             .user_repository
             .find_by_email(input.email.as_str())
             .await
             .map_err(|_| LoginError::DbInternalError)?;
 
-        let found_user = match found_user {
-            Some(user) => user,
-            None => return Err(LoginError::UserNotFound),
+        let Some(user) = found_user else {
+            return Err(LoginError::UserNotFound);
         };
 
-        match found_user.password_hash.verify_password(&input.password) {
-            Ok(true) => Ok(found_user),
+        match user.password_hash.verify_password(&input.password) {
+            Ok(true) => {
+                let access = generate_access_token(user.id.clone(), user.email.clone())
+                    .map_err(|_| LoginError::JWTEncodingError)?;
+
+                let refresh = generate_refresh_token(user.id, user.email)
+                    .map_err(|_| LoginError::JWTEncodingError)?;
+
+                Ok()
+            }
             Ok(false) => Err(LoginError::BadCredentials),
             Err(_) => Err(LoginError::JWTEncodingError),
         }

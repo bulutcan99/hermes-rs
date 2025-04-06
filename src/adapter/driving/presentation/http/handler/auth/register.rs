@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
-use axum::extract::State;
 use axum::Json;
+use axum::extract::State;
 use http::StatusCode;
 use serde_derive::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -15,7 +15,6 @@ use crate::adapter::driving::presentation::http::router::AppState;
 use crate::core::application::usecase::auth::error::RegisterError;
 use crate::core::domain::valueobject::date::Timestamp;
 use crate::core::port::user::UserManagement;
-use crate::shared::worker::mailer::auth::service::AuthMailer;
 
 #[derive(Debug, Serialize, Deserialize, Validate)]
 pub struct UserRegisterRequest {
@@ -48,7 +47,13 @@ pub struct UserRegisterRequest {
 }
 
 #[derive(Serialize, Debug)]
-pub struct UserRegisterResponse {
+struct UserRegisterResponse {
+    message: String,
+    user: UserResponse,
+}
+
+#[derive(Serialize, Debug)]
+struct UserResponse {
     pub user_id: Uuid,
     pub name: String,
     pub surname: String,
@@ -93,7 +98,7 @@ where
     let result = app.user_service.register(&register_user).await;
     match result {
         Ok(registered_user) => {
-            let res = UserRegisterResponse {
+            let user_res = UserResponse {
                 user_id: registered_user.id.unwrap(),
                 name: registered_user.name,
                 surname: registered_user.surname,
@@ -102,6 +107,11 @@ where
                 password: register_user.password.clone(),
                 created_at: registered_user.created_at,
                 updated_at: registered_user.updated_at,
+            };
+
+            let res = UserRegisterResponse {
+                message: "User registered successfully! Please verify your email.".to_string(),
+                user: user_res,
             };
 
             Ok(ApiResponseData::success_with_data(res, StatusCode::OK))

@@ -1,3 +1,3 @@
 pub mod error;
+pub mod jwt;
 pub mod service;
-pub mod token;
