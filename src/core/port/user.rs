@@ -1,10 +1,6 @@
 use anyhow::Error;
 use async_trait::async_trait;
-use validator::ValidationErrors;
 
-use crate::adapter::driving::presentation::http::handler::auth::login::UserLoginRequest;
-use crate::adapter::driving::presentation::http::handler::auth::register::UserRegisterRequest;
-use crate::core::application::usecase::auth::error::{LoginError, MeError, RegisterError};
 use crate::core::domain::entity::user::User;
 
 #[async_trait]
@@ -15,14 +11,4 @@ pub trait UserStorage: Send + Sync + 'static {
     async fn find_all(&self) -> Result<Vec<User>, Error>;
     async fn find_by_id(&self, id_str: &str) -> Result<Option<User>, Error>;
     async fn find_by_email(&self, email: &str) -> Result<Option<User>, Error>;
-}
-
-#[async_trait]
-pub trait UserManagement: Send + Sync + 'static {
-    async fn register(
-        &self,
-        input: &UserRegisterRequest,
-    ) -> Result<User, RegisterError<ValidationErrors>>;
-    async fn login(&self, input: &UserLoginRequest) -> Result<(String, String), LoginError>;
-    async fn me(&self, email: &str) -> Result<User, MeError>;
 }

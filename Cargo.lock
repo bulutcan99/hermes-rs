@@ -1836,6 +1836,7 @@ dependencies = [
  "jsonwebtoken",
  "lazy_static",
  "lettre",
+ "regex",
  "rusty-sidekiq",
  "serde",
  "serde_derive",

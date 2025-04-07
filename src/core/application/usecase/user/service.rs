@@ -1,15 +1,14 @@
 use std::sync::Arc;
 
 use async_trait::async_trait;
+use serde::de::Error;
 use validator::ValidationErrors;
 
 use crate::adapter::driving::presentation::http::handler::auth::login::UserLoginRequest;
 use crate::adapter::driving::presentation::http::handler::auth::register::UserRegisterRequest;
-use crate::core::application::usecase::auth::error::{LoginError, MeError, RegisterError};
-use crate::core::application::usecase::auth::jwt::{generate_access_token, generate_refresh_token};
 use crate::core::domain::entity::user::User;
 use crate::core::domain::valueobject::role;
-use crate::core::port::user::{UserManagement, UserStorage};
+use crate::core::port::user::UserStorage;
 
 #[derive(Debug, Clone)]
 pub struct UserService<K>
@@ -29,14 +28,14 @@ where
 }
 
 #[async_trait]
-impl<K> UserManagement for UserService<K>
+impl<K> UserService<K>
 where
     K: UserStorage,
 {
     async fn register(
         &self,
         input: &UserRegisterRequest,
-    ) -> Result<User, RegisterError<ValidationErrors>> {
+    ) -> Result<User, Box<dyn std::error::Error>> {
         let found_user = self
             .user_repository
             .find_by_email(input.email.as_str())
@@ -64,7 +63,10 @@ where
         Ok(registered_user)
     }
 
-    async fn login(&self, input: &UserLoginRequest) -> Result<(String, String), LoginError> {
+    async fn login(
+        &self,
+        input: &UserLoginRequest,
+    ) -> Result<(String, String), Box<dyn std::error::Error>> {
         let found_user = self
             .user_repository
             .find_by_email(input.email.as_str())
@@ -90,7 +92,7 @@ where
         }
     }
 
-    async fn me(&self, email: &str) -> Result<User, MeError> {
+    async fn me(&self, email: &str) -> Result<User, Box<dyn std::error::Error>> {
         let user = self
             .user_repository
             .find_by_email(email)
