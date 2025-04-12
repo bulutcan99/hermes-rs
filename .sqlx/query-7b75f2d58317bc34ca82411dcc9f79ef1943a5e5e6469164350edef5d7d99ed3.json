@@ -1,59 +1,57 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        INSERT INTO \"user\" (id, name, surname, email, role, password_hash, created_at, updated_at)\n        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)\n        RETURNING id, name, surname, email, role, password_hash, created_at, updated_at\n        ",
+  "query": "\n            SELECT id, pid, name, surname, email, role, password_hash, created_at, updated_at\n            FROM \"user\"\n            WHERE email = $1\n            ",
   "describe": {
     "columns": [
       {
         "ordinal": 0,
         "name": "id",
-        "type_info": "Uuid"
+        "type_info": "Int4"
       },
       {
         "ordinal": 1,
+        "name": "pid",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 2,
         "name": "name",
         "type_info": "Text"
       },
       {
-        "ordinal": 2,
+        "ordinal": 3,
         "name": "surname",
         "type_info": "Text"
       },
       {
-        "ordinal": 3,
+        "ordinal": 4,
         "name": "email",
         "type_info": "Text"
       },
       {
-        "ordinal": 4,
+        "ordinal": 5,
         "name": "role",
         "type_info": "Text"
       },
       {
-        "ordinal": 5,
+        "ordinal": 6,
         "name": "password_hash",
         "type_info": "Text"
       },
       {
-        "ordinal": 6,
+        "ordinal": 7,
         "name": "created_at",
         "type_info": "Timestamptz"
       },
       {
-        "ordinal": 7,
+        "ordinal": 8,
         "name": "updated_at",
         "type_info": "Timestamptz"
       }
     ],
     "parameters": {
       "Left": [
-        "Uuid",
-        "Text",
-        "Text",
-        "Text",
-        "Text",
-        "Text",
-        "Timestamptz",
-        "Timestamptz"
+        "Text"
       ]
     },
     "nullable": [
@@ -64,8 +62,9 @@
       false,
       false,
       false,
+      false,
       false
     ]
   },
-  "hash": "b23c80e76c640757ff75d80786ce78c4948079b8c6f67ac46317a745d60defa1"
+  "hash": "7b75f2d58317bc34ca82411dcc9f79ef1943a5e5e6469164350edef5d7d99ed3"
 }

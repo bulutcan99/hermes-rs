@@ -1,10 +1,7 @@
 use std::sync::Arc;
 
 use anyhow::Error;
-use async_trait::async_trait;
 use sqlx::{Pool, Postgres};
-use time::OffsetDateTime;
-use uuid::Uuid;
 
 use crate::core::domain::entity::user::User;
 use crate::core::domain::valueobject::date::Timestamp;
@@ -23,29 +20,30 @@ impl DatabaseUserRepo {
     }
 }
 
-#[async_trait]
 impl UserStorage for DatabaseUserRepo {
-    async fn save(&self, user: &User) -> Result<User, Error> {
+    async fn save(&self, user: User) -> Result<User, Error> {
+        let db = self.db.clone();
         let result = sqlx::query!(
             r#"
-        INSERT INTO "user" (id, name, surname, email, role, password_hash, created_at, updated_at)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-        RETURNING id, name, surname, email, role, password_hash, created_at, updated_at
-        "#,
-            user.id,
+            INSERT INTO "user" (pid, name, surname, email, role, password_hash, created_at, updated_at)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            RETURNING id, pid, name, surname, email, role, password_hash, created_at, updated_at
+            "#,
+            user.pid,
             user.name,
             user.surname,
             user.email,
             user.role.as_string(),
             user.password_hash.as_string(),
-            Timestamp::now_utc().convert_to_offset(),
-            Timestamp::now_utc().convert_to_offset(),
+            user.created_at.convert_to_offset(),
+            user.updated_at.convert_to_offset(),
         )
-        .fetch_one(&*self.db)
+        .fetch_one(&*db)
         .await?;
 
-        let saved_user = User {
-            id: Some(result.id),
+        Ok(User {
+            id: result.id,
+            pid: result.pid,
             name: result.name,
             surname: result.surname,
             email: result.email,
@@ -53,26 +51,24 @@ impl UserStorage for DatabaseUserRepo {
             password_hash: HashedPassword::from(result.password_hash),
             created_at: Timestamp::from(result.created_at),
             updated_at: Timestamp::from(result.updated_at),
-        };
-
-        Ok(saved_user)
+        })
     }
 
-    async fn update(&self, id_str: &str, user: &User) -> Result<User, Error> {
-        let id = Uuid::parse_str(id_str)?;
+    async fn update(&self, id: i32, user: User) -> Result<User, Error> {
+        let db = self.db.clone();
         let result = sqlx::query!(
             r#"
-        UPDATE "user"
-        SET
-            name = COALESCE($2, name),
-            surname = COALESCE($3, surname),
-            email = COALESCE($4, email),
-            role = COALESCE($5, role),
-            password_hash = COALESCE($6, password_hash),
-            updated_at = COALESCE($7, updated_at)
-        WHERE id = $1
-        RETURNING id, name, surname, email, role, password_hash, created_at, updated_at
-        "#,
+            UPDATE "user"
+            SET
+                name = $2,
+                surname = $3,
+                email = $4,
+                role = $5,
+                password_hash = $6,
+                updated_at = $7
+            WHERE id = $1
+            RETURNING id, pid, name, surname, email, role, password_hash, created_at, updated_at
+            "#,
             id,
             user.name,
             user.surname,
@@ -81,11 +77,12 @@ impl UserStorage for DatabaseUserRepo {
             user.password_hash.as_string(),
             Timestamp::now_utc().convert_to_offset(),
         )
-        .fetch_one(&*self.db)
+        .fetch_one(&*db)
         .await?;
 
-        let updated_user = User {
-            id: Some(result.id),
+        Ok(User {
+            id: result.id,
+            pid: result.pid,
             name: result.name,
             surname: result.surname,
             email: result.email,
@@ -93,41 +90,40 @@ impl UserStorage for DatabaseUserRepo {
             password_hash: HashedPassword::from(result.password_hash),
             created_at: Timestamp::from(result.created_at),
             updated_at: Timestamp::from(result.updated_at),
-        };
-
-        Ok(updated_user)
+        })
     }
 
-    async fn delete(&self, id_str: &str) -> Result<(), Error> {
-        let id = Uuid::parse_str(id_str)?;
-
+    async fn delete(&self, id: i32) -> Result<(), Error> {
+        let db = self.db.clone();
         sqlx::query!(
             r#"
-						DELETE FROM "user"
-						WHERE id = $1
-						"#,
+            DELETE FROM "user"
+            WHERE id = $1
+            "#,
             id
         )
-        .execute(&*self.db)
+        .execute(&*db)
         .await?;
 
         Ok(())
     }
 
     async fn find_all(&self) -> Result<Vec<User>, Error> {
+        let db = self.db.clone();
         let rows = sqlx::query!(
             r#"
-						SELECT id, name, surname, email, role, password_hash, created_at, updated_at
-						FROM "user"
-						"#
+            SELECT id, pid, name, surname, email, role, password_hash, created_at, updated_at
+            FROM "user"
+            "#
         )
-        .fetch_all(&*self.db)
+        .fetch_all(&*db)
         .await?;
 
-        let users = rows
+        Ok(rows
             .into_iter()
             .map(|row| User {
-                id: Some(row.id),
+                id: row.id,
+                pid: row.pid,
                 name: row.name,
                 surname: row.surname,
                 email: row.email,
@@ -136,26 +132,25 @@ impl UserStorage for DatabaseUserRepo {
                 created_at: Timestamp::from(row.created_at),
                 updated_at: Timestamp::from(row.updated_at),
             })
-            .collect();
-
-        Ok(users)
+            .collect())
     }
 
-    async fn find_by_id(&self, id_str: &str) -> Result<Option<User>, Error> {
-        let id = Uuid::parse_str(id_str)?;
+    async fn find_by_id(&self, id: i32) -> Result<Option<User>, Error> {
+        let db = self.db.clone();
         let row = sqlx::query!(
             r#"
-						SELECT id, name, surname, email, role, password_hash, created_at, updated_at
-						FROM "user"
-						WHERE id = $1
-						"#,
+            SELECT id, pid, name, surname, email, role, password_hash, created_at, updated_at
+            FROM "user"
+            WHERE id = $1
+            "#,
             id
         )
-        .fetch_optional(&*self.db)
+        .fetch_optional(&*db)
         .await?;
 
-        let user = row.map(|row| User {
-            id: Some(row.id),
+        Ok(row.map(|row| User {
+            id: row.id,
+            pid: row.pid,
             name: row.name,
             surname: row.surname,
             email: row.email,
@@ -163,25 +158,25 @@ impl UserStorage for DatabaseUserRepo {
             password_hash: HashedPassword::from(row.password_hash),
             created_at: Timestamp::from(row.created_at),
             updated_at: Timestamp::from(row.updated_at),
-        });
-
-        Ok(user)
+        }))
     }
 
     async fn find_by_email(&self, email: &str) -> Result<Option<User>, Error> {
+        let db = self.db.clone();
         let row = sqlx::query!(
             r#"
-						SELECT id, name, surname, email, role, password_hash, created_at, updated_at
-						FROM "user"
-						WHERE email = $1
-						"#,
+            SELECT id, pid, name, surname, email, role, password_hash, created_at, updated_at
+            FROM "user"
+            WHERE email = $1
+            "#,
             email
         )
-        .fetch_optional(&*self.db)
+        .fetch_optional(&*db)
         .await?;
 
-        let user = row.map(|row| User {
-            id: Some(row.id),
+        Ok(row.map(|row| User {
+            id: row.id,
+            pid: row.pid,
             name: row.name,
             surname: row.surname,
             email: row.email,
@@ -189,8 +184,6 @@ impl UserStorage for DatabaseUserRepo {
             password_hash: HashedPassword::from(row.password_hash),
             created_at: Timestamp::from(row.created_at),
             updated_at: Timestamp::from(row.updated_at),
-        });
-
-        Ok(user)
+        }))
     }
 }

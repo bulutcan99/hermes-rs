@@ -8,7 +8,8 @@ use crate::core::domain::valueobject::role::Role;
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct User {
-    pub id: Uuid,
+    pub id: i32,
+    pub pid: Uuid,
     pub name: String,
     pub surname: String,
     pub email: String,
@@ -22,7 +23,8 @@ impl User {
     pub fn new(name: String, surname: String, email: String, password: String, role: Role) -> Self {
         let hashed_password = HashedPassword::new(password.as_str(), &email);
         User {
-            id: Uuid::new_v4(),
+            id: 0,
+            pid: Uuid::new_v4(),
             name,
             surname,
             email,

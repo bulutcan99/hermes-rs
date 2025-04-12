@@ -1,52 +1,63 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n\t\t\t\t\t\tSELECT id, name, surname, email, role, password_hash, created_at, updated_at\n\t\t\t\t\t\tFROM \"user\"\n\t\t\t\t\t\tWHERE id = $1\n\t\t\t\t\t\t",
+  "query": "\n            UPDATE \"user\"\n            SET\n                name = $2,\n                surname = $3,\n                email = $4,\n                role = $5,\n                password_hash = $6,\n                updated_at = $7\n            WHERE id = $1\n            RETURNING id, pid, name, surname, email, role, password_hash, created_at, updated_at\n            ",
   "describe": {
     "columns": [
       {
         "ordinal": 0,
         "name": "id",
-        "type_info": "Uuid"
+        "type_info": "Int4"
       },
       {
         "ordinal": 1,
+        "name": "pid",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 2,
         "name": "name",
         "type_info": "Text"
       },
       {
-        "ordinal": 2,
+        "ordinal": 3,
         "name": "surname",
         "type_info": "Text"
       },
       {
-        "ordinal": 3,
+        "ordinal": 4,
         "name": "email",
         "type_info": "Text"
       },
       {
-        "ordinal": 4,
+        "ordinal": 5,
         "name": "role",
         "type_info": "Text"
       },
       {
-        "ordinal": 5,
+        "ordinal": 6,
         "name": "password_hash",
         "type_info": "Text"
       },
       {
-        "ordinal": 6,
+        "ordinal": 7,
         "name": "created_at",
         "type_info": "Timestamptz"
       },
       {
-        "ordinal": 7,
+        "ordinal": 8,
         "name": "updated_at",
         "type_info": "Timestamptz"
       }
     ],
     "parameters": {
       "Left": [
-        "Uuid"
+        "Int4",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Timestamptz"
       ]
     },
     "nullable": [
@@ -57,8 +68,9 @@
       false,
       false,
       false,
+      false,
       false
     ]
   },
-  "hash": "dcf751a573de21ddc124e5226abe80c476844ea1f181e5f5bbf9f585802c00c8"
+  "hash": "9a8ad51395965f84f24a568e3c10e38b4f3eccbd565617a7d730d139d4dad319"
 }

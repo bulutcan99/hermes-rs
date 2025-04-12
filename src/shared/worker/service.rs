@@ -1,7 +1,6 @@
 use crate::shared::config::config::{Config, WorkerMode};
 use crate::shared::worker::mailer::email_sender::EmailSender;
 use anyhow::anyhow;
-use async_trait::async_trait;
 pub use bb8::Pool;
 use sidekiq::{Error, RedisConnectionManager, Worker};
 use tracing::error;
@@ -20,7 +19,6 @@ impl TaskContext {
 
 pub type Result<T> = std::result::Result<T, Error>;
 
-#[async_trait]
 #[allow(clippy::module_name_repetitions)]
 pub trait AppWorker<T>: Worker<T>
 where

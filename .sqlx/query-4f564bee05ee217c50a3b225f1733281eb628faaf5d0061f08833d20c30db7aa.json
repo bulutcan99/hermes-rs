@@ -1,61 +1,59 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        UPDATE \"user\"\n        SET\n            name = COALESCE($2, name),\n            surname = COALESCE($3, surname),\n            email = COALESCE($4, email),\n            role = COALESCE($5, role),\n            password_hash = COALESCE($6, password_hash),\n            updated_at = COALESCE($7, updated_at)\n        WHERE id = $1\n        RETURNING id, name, surname, email, role, password_hash, created_at, updated_at\n        ",
+  "query": "\n            SELECT id, pid, name, surname, email, role, password_hash, created_at, updated_at\n            FROM \"user\"\n            ",
   "describe": {
     "columns": [
       {
         "ordinal": 0,
         "name": "id",
-        "type_info": "Uuid"
+        "type_info": "Int4"
       },
       {
         "ordinal": 1,
+        "name": "pid",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 2,
         "name": "name",
         "type_info": "Text"
       },
       {
-        "ordinal": 2,
+        "ordinal": 3,
         "name": "surname",
         "type_info": "Text"
       },
       {
-        "ordinal": 3,
+        "ordinal": 4,
         "name": "email",
         "type_info": "Text"
       },
       {
-        "ordinal": 4,
+        "ordinal": 5,
         "name": "role",
         "type_info": "Text"
       },
       {
-        "ordinal": 5,
+        "ordinal": 6,
         "name": "password_hash",
         "type_info": "Text"
       },
       {
-        "ordinal": 6,
+        "ordinal": 7,
         "name": "created_at",
         "type_info": "Timestamptz"
       },
       {
-        "ordinal": 7,
+        "ordinal": 8,
         "name": "updated_at",
         "type_info": "Timestamptz"
       }
     ],
     "parameters": {
-      "Left": [
-        "Uuid",
-        "Text",
-        "Text",
-        "Text",
-        "Text",
-        "Text",
-        "Timestamptz"
-      ]
+      "Left": []
     },
     "nullable": [
+      false,
       false,
       false,
       false,
@@ -66,5 +64,5 @@
       false
     ]
   },
-  "hash": "39e6ad71d2f3b20b761a2b37d8c1cef50a005617a52fbee1f2e7d3c3a14adf8a"
+  "hash": "4f564bee05ee217c50a3b225f1733281eb628faaf5d0061f08833d20c30db7aa"
 }

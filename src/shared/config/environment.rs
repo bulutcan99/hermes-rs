@@ -80,16 +80,18 @@ mod tests {
 
     #[test]
     fn test_from_env() {
-        env::set_var("environment", "production");
-        let e = Environment::from_env();
-        assert_eq!(e, Environment::Production);
+        unsafe {
+            env::set_var("environment", "production");
+            let e = Environment::from_env();
+            assert_eq!(e, Environment::Production);
 
-        env::set_var("environment", "custom");
-        let e = Environment::from_env();
-        assert_eq!(e, Environment::Any("custom".to_string()));
+            env::set_var("environment", "custom");
+            let e = Environment::from_env();
+            assert_eq!(e, Environment::Any("custom".to_string()));
 
-        env::remove_var("environment");
-        let e = Environment::from_env();
-        assert_eq!(e, Environment::Development);
+            env::remove_var("environment");
+            let e = Environment::from_env();
+            assert_eq!(e, Environment::Development);
+        }
     }
 }

@@ -7,7 +7,6 @@ edition = "2024"
 
 # Async & Concurrency
 tokio = { version = "1.44.1", features = ["full"] }
-async-trait = "0.1.81"
 bb8 = { version = "0.9.0" }
 
 # Web & Networking
@@ -20,7 +19,12 @@ http = "1.1.0"
 socketioxide = { version = "0.16.2" }
 
 # Database
-sqlx = { version = "0.8.3", features = ["postgres", "runtime-tokio-rustls", "uuid", "time"] }
+sqlx = { version = "0.8.3", features = [
+  "postgres",
+  "runtime-tokio-rustls",
+  "uuid",
+  "time",
+] }
 
 # Serialization & Deserialization
 serde = { version = "1.0.219", features = ["derive"] }
@@ -32,7 +36,11 @@ erased-serde = "0.4.6"
 
 # Logging & Tracing
 tracing = "0.1"
-tracing-subscriber = { version = "0.3", features = ["env-filter", "json", "time"] }
+tracing-subscriber = { version = "0.3", features = [
+  "env-filter",
+  "json",
+  "time",
+] }
 tracing-appender = "0.2.3"
 
 # Time & UUID
@@ -61,10 +69,10 @@ include_dir = "0.7.4"
 lazy_static = "1.5.0"
 tera = "1.20.0"
 lettre = { version = "0.11.4", default-features = false, features = [
-    "builder",
-    "hostname",
-    "smtp-transport",
-    "tokio1-rustls-tls",
+  "builder",
+  "hostname",
+  "smtp-transport",
+  "tokio1-rustls-tls",
 ] }
 rusty-sidekiq = { version = "0.13.2", default-features = false }
 jsonwebtoken = "9.3.1"
