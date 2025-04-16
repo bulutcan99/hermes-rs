@@ -3,7 +3,6 @@ use std::sync::Arc;
 use axum::middleware::from_fn_with_state;
 use axum::routing::{get, post};
 use axum::Router;
-use tower_cookies::CookieManagerLayer;
 
 use crate::core::application::usecase::app_context::AppContext;
 use crate::core::port::user::UserStorage;
